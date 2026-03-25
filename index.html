@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+  <body>
+	<h2>Multicast WebSocket</h2>
+
+    <div id="uuid-div" style="display: none;">
+        UUID do cliente: <span id="uuid"></span>
+        <br /><br />    
+    </div>
+
+
+	Grupo:
+	<input id="group" />
+	<button onclick="join()">Entrar</button>
+
+	<br /><br />
+
+	<div id="msg-div" style="display: none;">
+		Mensagem:
+		<input id="msg" />
+		<button onclick="send()">Enviar</button>
+	</div>
+
+    <br />
+    
+	<div id="log"></div>
+	<script>
+		let id;
+
+		const ws = new WebSocket("ws://localhost:8080");
+
+		const groupDiv = document.getElementById("msg-div");
+        
+
+		function log(text) {
+			document.getElementById("log").innerHTML += text + "<br>";
+		}
+	  	
+		function join() {
+		let group = document.getElementById("group").value;
+
+		groupDiv.style.display = 'block';
+
+		ws.send(
+		  JSON.stringify({
+			type: "join",
+			group: group,
+		  }),
+		);
+		log("Entrou no grupo " + group);
+	  }
+
+	  function send() {
+		let msg = document.getElementById("msg").value;
+		let group = document.getElementById("group").value;
+		ws.send(
+		  JSON.stringify({
+			type: "msg",
+			group: group,
+			msg: msg,
+			id: id
+		  }),
+		);
+	  }
+      
+	  ws.onmessage = (event) => {
+		let data = JSON.parse(event.data);
+		if (data.type === 'set-id') {
+			id = data.id;
+            
+            document.getElementById('uuid-div').style.display = 'block';
+            document.getElementById('uuid').innerText = data.id;
+        }
+
+        if(data.type === 'msg'){
+            log("Recebido: " + data.msg);
+		    ws.send(JSON.stringify({type: "ack", msgId: data.msgId}))
+        }
+
+	  };
+	</script>
+  </body>
+</html>

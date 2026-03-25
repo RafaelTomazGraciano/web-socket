@@ -1,0 +1,35 @@
+# Node modules
+/node_modules
+node_modules/
+
+# npm
+npm-debug.log*
+npm-error.log*
+.npm
+
+# yarn
+yarn-debug.log*
+yarn-error.log*
+
+# Lock files (opcional - descomente se quiser ignorar)
+# package-lock.json
+# yarn.lock
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Build/dist
+/dist
+/build
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
